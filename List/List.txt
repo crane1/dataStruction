@@ -1,0 +1,116 @@
+数据结构与算法	第三天	线性表（一）
+1 定义
+    线性表(List)：零个或多个数据元素的有限序列。
+    强调：首先它是一个序列。也就是说，元素之间是有顺序的，若元素存在多个，则第一个元素无前驱，最后一个元素无后继，其他每个元素都有且只有一个前驱和后继。
+
+    数学定义：
+    若线性表记为(a1,...,ai-1,ai,ai+1,...,an)，则表中ai-1领先余ai,ai领先于ai+1,称ai-1是ai的直接前驱元素，ai+1是ai的直接后继元素。当i=1,2,...,n-1时，ai有且进有一个后继，当i=2,3,...,n时，ai有且仅有一个直接前驱。
+    线性表元素的个数n(n>=0)定义为线性表的长度，当n=0时，称为空表。
+
+    在较复杂的线性表中，一个数据元素可以由若干个数据项组成。
+2 线性表的抽象数据类型
+    ADT 线性表（List）
+    Data
+        线性表的数据对象集合为{a1,a2,...,an}，每个元素的类型均为DataType。其中，除第一个元素a1外，每一个元素有且只有一个直接前驱元素，除了最后一个元素an外，每一个元素有且只有一个直接后继元素。数据元素之间的关系时一对一的关系。
+    Operation
+        InitList(*L)： 初始化操作，建立一个空的线性表L。
+        ListEmpty(L):  若线性表为空，返回true，否则返回false。
+        ClearList(*L): 将线性表清空。
+        GetElem(L, i, *e)： 将线性表L中的第i个位置元素值返回给e。
+        LocateElem(L, e): 在线性表L中查找与给定值e相等的元素，如果查找成功，返回该元素在表中序号表示成功； 否则，返回0表示失败。
+        ListInsert(*L, i, e): 在线性表L中的第i个位置插入新元素e。
+        ListDelete(*L, i, *e): 删除线性表L中第i个位置元素，并用e返回其值。
+        ListLength(L): 返回线性表L中的元素个数
+    endADT
+3 线性表的顺序存储结构
+    定义：用一段地址连续的存储单元依次存储线性表的数据元素。
+    线性表的顺序存储的结构代码。
+    #define MAXSIZE 20      //存储空间初始分配量
+    typedef int ElemType;   //ElemType类型根据实际情况而定，这里假设为int
+    typedef struct{
+        ElemType data[MAXSIZE]; //数组存储数据元素，最大值为MAXSIZE
+        int length;     //线性表当前长度
+    }SqList;
+    数组的长度时存放线性表的存储空间的长度，存储分配后这个量一般时不变的。
+    线性表的长度是线性表中数据元素的个数，随着线性表插入和删除操作的进行这个量是变化的。
+4 顺序存储结构的插入与删除
+    4.1 获取元素操作i
+        将线性表L中的第i个位置元素值返回。只要i的数值在数组下标范围内，就是把数组第i-1下标的值返回即可。代码：
+    #define Ok 1
+    #define ERROR 0
+    #define TRUE 1
+    #define FALSE 0
+    typedef int Status;
+    /* Status是函数的类型，其值是函数结果的状态代码，如OK等
+     * 初始条件：顺序线性表L已存在，1<= i <= ListLength(L)
+     * 操作结果：用e返回L中第i个数据元素的值
+     */
+    Status GetElem(SqList L, int i, ElemType *e){
+        if(L.length == 0 || i < 1 || i > L.length)
+            return ERROR;
+        *e = L.data[i - 1];
+        return OK;
+    }
+
+    4.2 插入操作
+        思路：
+            1. 如果插入位置不合理，抛出异常；
+            2. 如果线性表长度大于等与数组长度，则抛出异常或动态增加容量；
+            3. 从最后一个元素开始向前遍历到第i个位置，分别将他们都向后移动一个位置；
+            4. 将要插入的元素插入位置i处；
+            5. 表长加1。
+        实现代码如下
+        /* 初始条件： 顺序线性表L已存在， 1<=i<=ListLength(L),
+         * 操作结果： 在L中第i个位置之前插入新的数据元素e，L的长度加1
+         */
+        Status ListInsert(SqList *L, int i, ElemType e){
+            int k;
+            if(L->length == MAXSIZE)    //顺序表已满
+                return ERROR;
+            //当i不再范围内，i可以插入到末尾，此时线性表其他元素不用挪动，所以此处长度+1
+            if(i < 1 || i > L->Length + 1)
+                return ERROR;
+            if(i <= L->length){  //若插入元素位置不在表尾
+                for(k == L->length - 1; k >= i-1; k--){
+                    L->data[k + 1] = L->data[k];
+                }
+            }
+            L->data[i-1] = e;   //将新元素插入
+            L->length++;
+            return OK;
+        }
+
+    4.3 删除操作
+        思路：
+            1.如果删除位置不合理，抛出异常；
+            2.取出删除元素；
+            3.从删除元素位置开始遍历到最后一个元素位置，分别将他们都向前移动一个位置；
+            4.表长减1
+        实现代码如下：
+        /**
+          * 初始条件：顺序线性表L已存在， 1 <= i <= ListLength(L)
+          * 操作结果：删除L的第i个数据元素，并用e返回其值，L的长度减1
+          */
+        Status ListDelete(SqList *L, int i, ElemType *e){
+            int k;
+            if(L->length == 0) //线性表已空
+                return ERROR;
+            if(i < 1 || i > L->length)  //删除位置不正确
+                return ERROR;
+            *e = L->data[i -1];
+            if(i < L->length){ //如果删除的不是最后的元素
+                for(k = i; k < L->length; i++){
+                    L->data[k - 1] = L->data[k];
+                }
+            }
+            L->length--;
+            return OK;
+        }
+
+5. 实现中遇到的问题
+    5.1 插入时只在第一个元素处插入，后面元素都为0？
+        if(i <= L->length){  //插入位置在中间，需要移动元素,插入的最后位置是+1处
+            for ( k = L->length -1; k >= i - 1; k--) {
+                L->data[k + 1] == L->data[k];   //此处把赋值写成了==比较，低级错误啊
+            }
+        }
