@@ -48,7 +48,7 @@ Status ListEmpty(SqList L){
     return L.length == 0 ;
 }
 
-//将线性表L中的第i个位置元素值返回给e。
+//清空线性表
 Status ClearList(SqList *L){
     InitList(L);
 }
@@ -61,14 +61,14 @@ Status GetElem(SqList L, int i, ElemType *e){
 }
 //在线性表L中查找与给定值e相等的元素，如果查找成功，返回该元素在表中序号表示成功；
 //否则，返回0表示失败。
-Status LocateElem(SqList L, ElemType e){
+int LocateElem(SqList L, ElemType e){
     int i = 0;
     for(;i < L.length; i++){
         if(L.data[i] == e)
-            return OK;
+            return i+1;
     }
 
-    return ERROR;
+    return 0;
 }
 
 //在线性表L中的第i个位置插入新元素e。
