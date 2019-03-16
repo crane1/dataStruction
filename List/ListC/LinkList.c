@@ -144,8 +144,7 @@ Status ListInsert(LinkList *L, int i, ElemType e){
     q = (LinkList)malloc(sizeof(Node)); //生成新结点
     q->data = e;
     q->next = p->next;  //把p的后继给新生成元素的后继
-    p->next = p;    //把新生成元素作为p的后继
-    printf("ListInsert %d!", e);
+    p->next = q;    //把新生成元素作为p的后继
     return OK;
 }
 

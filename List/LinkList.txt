@@ -198,3 +198,9 @@
         }
 3. 实现中遇到的问题
     3.1 插入元素后打印，无限打印0？
+        q = (LinkList)malloc(sizeof(Node)); //生成新结点
+        q->data = e;
+        q->next = p->next;  //把p的后继给新生成元素的后继
+        p->next = p;    //把新生成元素作为p的后继
+
+        在实现插入的时候最后把p赋给了p->next，正确的应该把q赋给->next.
